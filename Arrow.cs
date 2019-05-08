@@ -16,7 +16,7 @@ public class Arrow : MonoBehaviour {
     Vector2 vSpace, nvSpace;
     bool fadeOut = false;
 
-    float FoV = 0;
+    float FoV = 0; // Range at which planets are detectable
 
     void Start() {
         player = GameObject.FindObjectOfType<Spaceship>().transform;
@@ -45,7 +45,7 @@ public class Arrow : MonoBehaviour {
         }
     }
 
-    IEnumerator FadeTo(float time, float value) {
+    IEnumerator FadeTo(float time, float value) { // Makes transitions smoother
         float s = i.color.a;
         for (float t = 0.0f; t < 1.0f; t += Time.deltaTime / time) {
             i.color = new Color(1, 1, 1, Mathf.Lerp(s, value, t));
@@ -66,7 +66,7 @@ public class Arrow : MonoBehaviour {
         StartCoroutine(FadeTo(0.4f, 0f));
         StartCoroutine(remove());
 
-        IEnumerator remove() {
+        IEnumerator remove() { // Wait until faded out before removing
             yield return new WaitUntil(() => i.color.a == 0);
             s.arrows.Remove(target.GetComponent<Gravity>());
             Destroy(gameObject);

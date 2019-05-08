@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class Gravity : MonoBehaviour {
 
-    protected Rigidbody rb;
+    protected Rigidbody rb; // used to apply forces
     Vector3 Fg;
     Vector3Int block;
+    List<Gravity> localBodies;
 
-    public List<Gravity> localBodies {get; protected set;}
     public bool Static;
 
-    public const double G = .5;
+    public const double G = .5; //  Not accurate, makes mass values easier
     public const int blockSize = 100;
     public static List<Gravity> bodiesNonStatic = new List<Gravity>();
     public static Dictionary<int, Dictionary<int, Dictionary<int, List<Gravity>>>> bodies =
@@ -40,7 +40,7 @@ public class Gravity : MonoBehaviour {
         }
     }
 
-    IEnumerator gravitate() {
+    IEnumerator gravitate() { // Main loop for gravity
         while (true) {
             Vector3Int nb = getBlock();
             if (nb != block) {
@@ -78,7 +78,7 @@ public class Gravity : MonoBehaviour {
         bodies[b.x][b.y][b.z].Add(this);
     }
 
-    public void UpdateLocalBodies() {
+    public void UpdateLocalBodies() { // Used to find planets close enough to calculate gravity
         localBodies = new List<Gravity>();
         for (int x = -1; x < 2; x++) { for (int y = -1; y < 2; y++) { for (int z = -1; z < 2; z++) {
             try {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Spaceship : Gravity {
+public class Spaceship : Gravity { // Attached to the Camera for now
 
     public float moveSpeed, turnSpeed, scrollSpeed;
     public GameObject Arrow;
@@ -20,6 +20,7 @@ public class Spaceship : Gravity {
         h = Input.GetAxis("Horizontal");
         v = Input.GetAxis("Vertical");
 
+        // Deals with adding forces to move spaceship
         rb.AddRelativeForce(Vector3.forward * moveSpeed * Input.GetAxis("Fire1"));
         rb.AddRelativeTorque(Vector3.left * turnSpeed * v);
         rb.AddRelativeTorque(Vector3.up * turnSpeed * h);
@@ -30,6 +31,7 @@ public class Spaceship : Gravity {
     }
 
     protected override void OnLocalBodiesUpdated(List<Gravity> localBodies) {
+        // Adds arrows to help track planets outside field of view
         foreach (Gravity g in localBodies) {
             if (!arrows.ContainsKey(g))
                 Instantiate(Arrow, canvas).GetComponent<Arrow>().instantiate(g, this);
