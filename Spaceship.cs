@@ -42,4 +42,13 @@ public class Spaceship : Gravity { // Attached to the Camera for now
             }
         }
     }
+
+    void OnCollisionEnter(Collision c) {
+        GameManager.setDanger(0);
+        Destroy(rb);
+        Instantiate(GameManager.pf["Explosion"], transform.position, transform.rotation);
+        transform.Translate(new Vector3(0, 8, -14));
+        transform.Rotate(Vector3.right, 30);
+        Destroy(this);
+    }
 }
