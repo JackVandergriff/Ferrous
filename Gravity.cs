@@ -3,15 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Gravity : MonoBehaviour {
+    // This just handles all proportional to distance squared stuff, so:
+    // Gravity, electrostatic force
 
     protected Rigidbody rb; // used to apply forces
     Vector3 Fg;
     Vector3Int block;
     List<Gravity> localBodies;
+    Dictionary<ForceTypes, Gravity> self = new Dictionary<ForceTypes, Gravity>();
 
     public bool Static;
+    public ForceTypes type = ForceTypes.gravity;
+    public float charge;
 
-    public const double G = .5; //  Not accurate, makes mass values easier
+    public const double G = .5; //  Not accurate, makes mass  values easier
+    public const double K = 9;  //  Not accurate, makes charge values easier
     public const int blockSize = 100;
     public static List<Gravity> bodiesNonStatic = new List<Gravity>();
     public static Dictionary<int, Dictionary<int, Dictionary<int, List<Gravity>>>> bodies =
@@ -20,8 +26,18 @@ public class Gravity : MonoBehaviour {
     protected virtual void OnLocalBodiesUpdated(List<Gravity> localBodies) {}
     protected virtual void StartExtra() {}
 
+    public enum ForceTypes { gravity, electrostatic}
+
     void Start() {
         rb = GetComponent<Rigidbody>();
+
+        foreach (Gravity g in GetComponents<Gravity>()) {
+            if (g != this && g.self.Count > 0) {
+                g.self.Add(type, this);
+                return;
+            }
+        }
+        self.Add(type, this);
 
         block = getBlock();
         SetBlock(block);
@@ -52,7 +68,11 @@ public class Gravity : MonoBehaviour {
             }
 
             foreach (Gravity g in localBodies) {
-                rb.AddForce(gravity(g, this));
+                foreach (KeyValuePair<ForceTypes, Gravity> kv in g.self) {
+                    if (self.ContainsKey(kv.Key)) {
+                        rb.AddForce(gravity(kv.Value, self[kv.Key], kv.Key));
+                    }
+                }
             }
 
             yield return null;
@@ -63,11 +83,17 @@ public class Gravity : MonoBehaviour {
         return Vector3Int.RoundToInt(transform.position / blockSize);
     }
 
-    Vector3 gravity(Gravity a, Gravity b) {
+    Vector3 gravity(Gravity a, Gravity b, ForceTypes t) {
         Vector3 delta = (a.transform.position - b.transform.position);
-        return delta * (float) G * a.rb.mass * b.rb.mass / (delta.magnitude * delta.magnitude * delta.magnitude);
+        switch (t) {
+            case ForceTypes.gravity:
+                return delta * (float) G * a.rb.mass * b.rb.mass / (delta.magnitude * delta.magnitude * delta.magnitude);
+            case ForceTypes.electrostatic:
+                return delta * (float) K * a.charge * b.charge / (delta.magnitude * delta.magnitude * delta.magnitude);
+        }
+        return Vector3.zero;
     }
-
+    
     void SetBlock(Vector3Int b) {
         if (!bodies.ContainsKey(b.x))
             bodies[b.x] = new Dictionary<int, Dictionary<int, List<Gravity>>>();

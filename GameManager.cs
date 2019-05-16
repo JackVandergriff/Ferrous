@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour {
     void Start() {
         ppv.profile.TryGetSettings(out vn);
         ppv.profile.TryGetSettings(out ca);
+        RenderSettings.fog = false;
     }
 
     public static void setDanger(float d) {
