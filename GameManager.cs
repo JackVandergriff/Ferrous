@@ -25,4 +25,9 @@ public class GameManager : MonoBehaviour {
         vn.intensity.value = d;
         ca.intensity.value = d;
     }
+
+    public static void addEffect(Color c, Transform t) {
+        ParticleSystem.MainModule m = Instantiate(pf["Particles"], t).GetComponent<ParticleSystem>().main;
+        m.startColor = c;
+    } 
 }

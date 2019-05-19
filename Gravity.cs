@@ -5,6 +5,7 @@ using UnityEngine;
 public class Gravity : MonoBehaviour {
     // This just handles all proportional to distance squared stuff, so:
     // Gravity, electrostatic force
+    // Fun fact: this is so bloated it can probably handle any force
 
     protected Rigidbody rb; // used to apply forces
     Vector3 Fg;
@@ -27,9 +28,17 @@ public class Gravity : MonoBehaviour {
     protected virtual void StartExtra() {}
 
     public enum ForceTypes { gravity, electrostatic}
+    public static Dictionary<ForceTypes,Dictionary<int, Color>> colormap = new Dictionary<ForceTypes, Dictionary<int, Color>>(){
+        {ForceTypes.gravity,        new Dictionary<int, Color>(){{0, new Color(0.5f, 0.4f, 0.8f)}}},
+        {ForceTypes.electrostatic,  new Dictionary<int, Color>(){{0, new Color(0.8f, 0.3f, 0.4f)},
+                                                                 {1, new Color(0.6f, 0.8f, 0.7f)}}}
+    };
 
     void Start() {
+        StartExtra();
         rb = GetComponent<Rigidbody>();
+
+        if (Static) GameManager.addEffect(colormap[type][0], transform);
 
         foreach (Gravity g in GetComponents<Gravity>()) {
             if (g != this && g.self.Count > 0) {
@@ -46,8 +55,6 @@ public class Gravity : MonoBehaviour {
             bodiesNonStatic.Add(this);
             StartCoroutine(StartLate());
         }
-
-        StartExtra();
 
         IEnumerator StartLate() {
             yield return new WaitForEndOfFrame();
