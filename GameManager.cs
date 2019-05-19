@@ -15,7 +15,6 @@ public class GameManager : MonoBehaviour {
     void Start() {
         ppv.profile.TryGetSettings(out vn);
         ppv.profile.TryGetSettings(out ca);
-        RenderSettings.fog = false;
         foreach (GameObject g in prefabs) {
             pf.Add(g.name, g);
         }

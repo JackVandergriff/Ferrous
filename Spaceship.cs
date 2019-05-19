@@ -47,8 +47,8 @@ public class Spaceship : Gravity { // Attached to the Camera for now
         GameManager.setDanger(0);
         Destroy(rb);
         Instantiate(GameManager.pf["Explosion"], transform.position, transform.rotation);
-        transform.Translate(new Vector3(0, 8, -14));
-        transform.Rotate(Vector3.right, 30);
+        transform.position = Vector3.LerpUnclamped(c.transform.position, transform.position, 2.8f);
+        transform.LookAt(c.transform);
         Destroy(this);
     }
 }
