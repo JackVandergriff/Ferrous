@@ -28,17 +28,12 @@ public class Gravity : MonoBehaviour {
     protected virtual void StartExtra() {}
 
     public enum ForceTypes { gravity, electrostatic}
-    public static Dictionary<ForceTypes,Dictionary<int, Color>> colormap = new Dictionary<ForceTypes, Dictionary<int, Color>>(){
-        {ForceTypes.gravity,        new Dictionary<int, Color>(){{0, new Color(0.5f, 0.4f, 0.8f)}}},
-        {ForceTypes.electrostatic,  new Dictionary<int, Color>(){{0, new Color(0.8f, 0.3f, 0.4f)},
-                                                                 {1, new Color(0.6f, 0.8f, 0.7f)}}}
-    };
 
     void Start() {
         rb = GetComponent<Rigidbody>();
         StartExtra();
 
-        if (Static) GameManager.addEffect(colormap[type][0], transform);
+        if (Static) GameManager.addEffect(Colormap(), transform);
 
         foreach (Gravity g in GetComponents<Gravity>()) {
             if (g != this && g.self.Count > 0) {
@@ -60,6 +55,17 @@ public class Gravity : MonoBehaviour {
             yield return new WaitForEndOfFrame();
             UpdateLocalBodies();
             StartCoroutine(gravitate());
+        }
+    }
+
+    Color Colormap() {
+        if (type == ForceTypes.electrostatic) {
+            if (charge > 0)
+                return new Color(0.6f, 0.8f, 0.7f);
+            else
+                return new Color(0.8f, 0.4f, 0.5f);
+        } else {
+            return new Color(0.2f, 0.2f, 0.4f);
         }
     }
 
