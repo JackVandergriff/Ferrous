@@ -8,8 +8,8 @@ public class Gravity : MonoBehaviour {
     // Fun fact: this is so bloated it can probably handle any force
 
     protected Rigidbody rb; // used to apply forces
+    protected Vector3Int block;
     Vector3 Fg;
-    Vector3Int block;
     List<Gravity> localBodies;
     Dictionary<ForceTypes, Gravity> self = new Dictionary<ForceTypes, Gravity>();
 
@@ -35,8 +35,8 @@ public class Gravity : MonoBehaviour {
     };
 
     void Start() {
-        StartExtra();
         rb = GetComponent<Rigidbody>();
+        StartExtra();
 
         if (Static) GameManager.addEffect(colormap[type][0], transform);
 
@@ -63,7 +63,7 @@ public class Gravity : MonoBehaviour {
         }
     }
 
-    IEnumerator gravitate() { // Main loop for gravity
+    protected IEnumerator gravitate() { // Main loop for gravity
         while (true) {
             Vector3Int nb = getBlock();
             if (nb != block) {
